@@ -1,10 +1,13 @@
+use bitvec::vec::BitVec;
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap};
 
-use bitvec::vec::BitVec;
-
 struct FrequencyMap {
     data: HashMap<u8, i32>,
+}
+
+fn byte_to_char(byte: &u8) -> char {
+    char::from_u32(*byte as u32).expect("All u8 values should be a valid char")
 }
 
 impl FrequencyMap {
@@ -27,27 +30,38 @@ impl From<&str> for FrequencyMap {
 }
 
 impl HuffmanNode {
-    fn into_encoding_table<'a>(self, prefix: Option<&BitVec>) -> HashMap<u8, BitVec> {
-        let prefix: &BitVec = prefix.unwrap_or(&BitVec::new());
-
+    fn into_encoding_table(self, prefix: BitVec) -> HashMap<u8, BitVec> {
         let mut result = HashMap::new();
 
         if let Some(data) = self.data {
+            // use a 1 bit if there is only one thing in the tree (no prefix yet)
+            if prefix.is_empty() {
+                result.insert(data, BitVec::from_slice(&[0]));
+                return result;
+            };
             result.insert(data, prefix.clone());
         };
 
-        let left_result = if let Some(left) = self.left {
+        if let Some(left) = self.left {
             let mut prefix = prefix.clone();
             prefix.push(false);
-            left.into_encoding_table(Some(&prefix))
-        } else {
-            todo!()
-        };
+
+            let left_result = left.into_encoding_table(prefix);
+
+            result.extend(left_result);
+        }
+
+        if let Some(right) = self.right {
+            let mut prefix = prefix.clone();
+            prefix.push(true);
+
+            let right_result = right.into_encoding_table(prefix);
+
+            result.extend(right_result);
+        }
 
         return result;
     }
-
-    fn 
 }
 
 #[derive(PartialEq, Eq)]
@@ -108,11 +122,7 @@ fn main() {
     let frequency_map = FrequencyMap::from("mississippi");
 
     for (byte, count) in &frequency_map.data {
-        println!(
-            "{:?} ({})",
-            char::from_u32(*byte as u32).expect("All u8 values should be a valid char"),
-            count
-        )
+        println!("{:?} ({})", byte_to_char(byte), count)
     }
 
     let huffman_nodes = frequency_map
@@ -140,4 +150,18 @@ fn main() {
     let Reverse(huffman_tree) = heap.pop().unwrap();
 
     huffman_tree.debug(2, 0);
+
+    let encoding_table = huffman_tree.into_encoding_table(Default::default());
+
+    encoding_table.iter().for_each(|(byte, prefix)| {
+        println!(
+            "{} -> {}",
+            byte_to_char(byte),
+            prefix
+                .iter()
+                .map(|v| if v == true { "1" } else { "0" })
+                .collect::<Vec<_>>()
+                .concat()
+        )
+    });
 }
