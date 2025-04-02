@@ -76,3 +76,5 @@ huffman_tree.debug(2)
 
 
 create_huffman_tree("aaaaabbbbcccdde").debug(2)
+
+create_huffman_tree(input("Enter string: ")).debug(2)
