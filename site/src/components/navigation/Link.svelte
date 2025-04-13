@@ -7,9 +7,6 @@
 	const { href, title }: Props = $props();
 </script>
 
-<a class="link" {href}>{title}</a>
-
-<style>
-	.link {
-	}
-</style>
+<a class="cursor-pointer transition-all duration-300 hover:scale-110 hover:opacity-80" {href}
+	>{title}</a
+>

@@ -1,18 +1,17 @@
 <script lang="ts">
 	interface Props {
-		headingType?: HeadingType;
+		headingType: HeadingType;
 		title: string;
 		href?: string;
 	}
 	type HeadingType = 'h1' | 'h2' | 'h3';
 
 	let { headingType, title, href }: Props = $props();
-	headingType ??= 'h1';
 </script>
 
 {#snippet inner(title: string)}
 	{#if headingType === 'h1'}
-		<h1 class="p8">{title}</h1>
+		<h1>{title}</h1>
 	{:else if headingType === 'h2'}
 		<h2>{title}</h2>
 	{:else}
@@ -32,6 +31,6 @@
 	h1,
 	h2,
 	h3 {
-		@apply underline underline-offset-2;
+		@apply flex underline underline-offset-2;
 	}
 </style>

@@ -1,24 +1,61 @@
 <script lang="ts">
-	import { encodeData } from '@/lib/huffman';
-	import { bytes } from '@/lib/utils';
-	import { onMount } from 'svelte';
+	import { bytes, onlyUnique } from '@/lib/utils';
 
-	let dataToEncode = 'aaabbc💀';
-	let encodeResult = new Uint8Array([1, 2, 1, 5, 0]);
+	let dataToEncode = $state('aaabbc💀');
 
-	onMount(() => bytes(dataToEncode));
+	let encodeResult = $derived(bytes(dataToEncode));
+
+	$effect(() => {
+		let splitted = [...new Intl.Segmenter().segment(dataToEncode)].map((v) => v.segment);
+		console.log(splitted);
+	});
+
+	console.log(['a', 'a', 'b', 'c']);
 </script>
 
 <div class="p-4">
-	<input type="text" placeholder="Data to encode" class="p-2" bind:value={dataToEncode} />
-	<button
-		class="cursor-pointer rounded-lg bg-zinc-700 p-2 transition-all hover:scale-120 hover:bg-zinc-600"
-		type="button"
-		onclick={() => bytes(dataToEncode.toWellFormed())}>Encode</button
-	>
+	<input
+		type="text"
+		placeholder="Data to encode"
+		class="w-full rounded-xl bg-zinc-900 p-4"
+		bind:value={dataToEncode}
+	/>
 	<div>
 		<span>Result:</span>
 		<span>{encodeResult}</span>
+	</div>
+	<div class="flex w-full flex-row">
+		<div class="w-1/2">
+			<h2>Normal Encoded (UTF-8)</h2>
+			<div>
+				<h3>Result</h3>
+				<span class="flex flex-wrap gap-2 font-mono">
+					{#each dataToEncode.split('') as char}
+						{#each bytes(char) as byte}
+							<span>{byte.toString(2)}</span>
+						{/each}
+					{/each}
+				</span>
+				<h3>Character Bits</h3>
+				<span class="grid grid-cols-[auto_1fr] gap-x-4">
+					{#each [...new Intl.Segmenter().segment(dataToEncode)]
+						.map((v) => v.segment)
+						.toSorted()
+						.filter(onlyUnique) as char}
+						<span class="flex justify-center">{char}</span>
+						<span class="flex flex-row gap-x-2 font-mono">
+							{#each bytes(char) as byte}
+								<span>{byte.toString(2).padStart(8, '0')}</span>
+							{/each}
+						</span>
+					{/each}
+				</span>
+			</div>
+		</div>
+		<div class="w-1/2">
+			<h2>Huffman Encoded</h2>
+			<span></span>
+		</div>
 	</div>
 </div>
 
