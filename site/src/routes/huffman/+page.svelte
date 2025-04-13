@@ -20,28 +20,30 @@
 		class="w-full rounded-xl bg-zinc-900 p-4"
 		bind:value={dataToEncode}
 	/>
-	<div class="flex w-full flex-row">
+	<div class="flex w-full flex-row py-2">
 		<div class="w-1/2">
 			<h2>Normal Encoded (UTF-8)</h2>
 			<div>
-				<h3>Result</h3>
-				<span class="flex flex-wrap gap-2 font-mono">
-					{#each encodeResult as byte}
-						<span>{byte.toString(2)}</span>
-					{/each}
-				</span>
 				<h3>Character Bits</h3>
-				<span class="grid grid-cols-[auto_1fr] gap-x-4">
+				<span class="grid grid-cols-[auto_auto_1fr] gap-x-2">
 					{#each [...new Intl.Segmenter().segment(dataToEncode)]
 						.map((v) => v.segment)
 						.toSorted()
 						.filter(onlyUnique) as char}
 						<span class="flex justify-center">{char}</span>
+						<span>=</span>
 						<span class="flex flex-row gap-x-2 font-mono">
 							{#each bytes(char) as byte}
 								<span>{byte.toString(2).padStart(8, '0')}</span>
 							{/each}
 						</span>
+					{/each}
+				</span>
+				<h3>Result</h3>
+				<div class="font-bold">Size: {encodeResult.length * 8} bits</div>
+				<span class="flex flex-wrap gap-2 font-mono">
+					{#each encodeResult as byte}
+						<span>{byte.toString(2).padStart(8, '0')}</span>
 					{/each}
 				</span>
 			</div>
