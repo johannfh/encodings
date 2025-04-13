@@ -20,20 +20,14 @@
 		class="w-full rounded-xl bg-zinc-900 p-4"
 		bind:value={dataToEncode}
 	/>
-	<div>
-		<span>Result:</span>
-		<span>{encodeResult}</span>
-	</div>
 	<div class="flex w-full flex-row">
 		<div class="w-1/2">
 			<h2>Normal Encoded (UTF-8)</h2>
 			<div>
 				<h3>Result</h3>
 				<span class="flex flex-wrap gap-2 font-mono">
-					{#each dataToEncode.split('') as char}
-						{#each bytes(char) as byte}
-							<span>{byte.toString(2)}</span>
-						{/each}
+					{#each encodeResult as byte}
+						<span>{byte.toString(2)}</span>
 					{/each}
 				</span>
 				<h3>Character Bits</h3>
