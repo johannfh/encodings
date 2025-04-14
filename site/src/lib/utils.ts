@@ -7,3 +7,4 @@ export function bytes(input?: string): Uint8Array {
 export function onlyUnique<T>(value: T, index: number, array: T[]) {
     return array.indexOf(value) === index;
 }
+

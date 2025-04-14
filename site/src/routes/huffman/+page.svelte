@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { generateHuffmanTree } from '@/lib/huffman';
+
 	const apiUrl = 'http://localhost:8080';
 
 	import { bytes, onlyUnique } from '@/lib/utils';
@@ -37,6 +39,9 @@
 			if (!connection) return;
 
 			console.log('SENDING!');
+			let huffmanTree = generateHuffmanTree(dataToEncode);
+			console.log(huffmanTree);
+
 			const message = encodeResult;
 			dataToEncode = '';
 
