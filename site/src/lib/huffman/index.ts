@@ -1,5 +1,5 @@
 import { MinHeap } from "@datastructures-js/heap";
-import type { ByteWriter } from "../bytes";
+import { ByteReader, ByteWriter } from "../bytes";
 
 export class HuffmanNode {
     public frequency: number = 0;
@@ -22,7 +22,25 @@ export class HuffmanNode {
         return this.byte !== undefined;
     }
 
-    public encodeAsBytes(writer: ByteWriter) {
+    public static decodeFromBytes(byteReader: ByteReader): HuffmanNode {
+        const isLeafNode = byteReader.readBit() === 1;
+        if (isLeafNode) {
+            const byte = byteReader.readByte();
+            return new HuffmanNode({ frequency: 0, byte })
+        } else {
+            const left = this.decodeFromBytes(byteReader);
+            const right = this.decodeFromBytes(byteReader);
+            return new HuffmanNode({ frequency: 0, left, right })
+        }
+    }
+
+    public static encodeAsBytes(huffmanNode: HuffmanNode): Uint8Array {
+        const writer = new ByteWriter();
+        huffmanNode.encodeAsBytes(writer)
+        return writer.flush()
+    }
+
+    private encodeAsBytes(writer: ByteWriter) {
         if (this.isLeafNode()) {
             writer.writeBit(1);
             writer.writeByte(this.byte!)

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ByteReader, ByteWriter, uint8ArrayToBinary } from '@/lib/bytes';
-	import { generateHuffmanTree } from '@/lib/huffman';
+	import { generateHuffmanTree, HuffmanNode } from '@/lib/huffman';
 
 	const apiUrl = 'http://localhost:8080';
 
@@ -45,11 +45,12 @@
 			let huffmanTree = generateHuffmanTree(encoder.encode(dataToEncode));
 			if (!huffmanTree) return;
 
-			let writer = new ByteWriter();
-			huffmanTree.encodeAsBytes(writer);
-			let huffmanEncoded = writer.flush();
-
-			console.log('huffman Tree as binary encoded:', uint8ArrayToBinary(huffmanEncoded));
+			let huffmanEncoded = HuffmanNode.encodeAsBytes(huffmanTree);
+			console.log('huffman tree as binary encoded:', uint8ArrayToBinary(huffmanEncoded));
+			console.log(
+				'huffman tree from binary decoded:',
+				HuffmanNode.decodeFromBytes(new ByteReader(huffmanEncoded))
+			);
 
 			messages.push(dataToEncode);
 			console.log(huffmanTree);
