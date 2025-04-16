@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ByteReader, ByteWriter, uint8ArrayToBinary } from '@/lib/bytes';
 	import { generateHuffmanTree } from '@/lib/huffman';
 
 	const apiUrl = 'http://localhost:8080';
@@ -11,6 +12,8 @@
 
 	let connection: WebSocket | undefined = undefined;
 	let messages: string[] = $state([]);
+
+	let encoder = new TextEncoder();
 	let decoder = new TextDecoder();
 
 	onMount(() => {
@@ -39,7 +42,16 @@
 			if (!connection) return;
 
 			console.log('SENDING!');
-			let huffmanTree = generateHuffmanTree(dataToEncode);
+			let huffmanTree = generateHuffmanTree(encoder.encode(dataToEncode));
+			if (!huffmanTree) return;
+
+			let writer = new ByteWriter();
+			huffmanTree.encodeAsBytes(writer);
+			let huffmanEncoded = writer.flush();
+
+			console.log('huffman Tree as binary encoded:', uint8ArrayToBinary(huffmanEncoded));
+
+			messages.push(dataToEncode);
 			console.log(huffmanTree);
 
 			const message = encodeResult;
