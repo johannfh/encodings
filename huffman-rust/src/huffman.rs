@@ -43,14 +43,12 @@ impl From<&[u8]> for HuffmanNode {
     fn from(value: &[u8]) -> Self {
         let frequencies = get_frequencies(value);
 
-        let huffman_nodes: Vec<HuffmanNode> = frequencies
+        let mut heap: BinaryHeap<Reverse<HuffmanNode>> = frequencies
             .into_iter()
             .map(|(data, frequency)| HuffmanNode::new(data, frequency))
-            .collect::<Vec<HuffmanNode>>();
-
-        // use Reverse<T> to convert max-heap to min-heap
-        let mut heap: BinaryHeap<Reverse<HuffmanNode>> =
-            huffman_nodes.into_iter().map(|v| Reverse(v)).collect();
+            // use Reverse<T> to convert max-heap to min-heap
+            .map(|v| Reverse(v))
+            .collect();
 
         while heap.len() > 1 {
             let Reverse(left) = heap
