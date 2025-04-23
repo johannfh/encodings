@@ -73,14 +73,16 @@
 			type="submit">Send</button
 		>
 	</form>
-	<h2>Messages</h2>
-	<div class="flex max-h-60 flex-col gap-4 overflow-y-auto font-mono">
-		{#each messages.toReversed() as message}
-			<div>
-				{message}
-			</div>
-		{/each}
-	</div>
+	{#if messages.length > 0}
+		<h2>Messages</h2>
+		<div class="flex max-h-60 flex-col gap-4 overflow-y-auto font-mono">
+			{#each messages.toReversed() as message}
+				<div>
+					{message}
+				</div>
+			{/each}
+		</div>
+	{/if}
 	<div class="flex w-full flex-row py-2">
 		<div class="w-1/2">
 			<h2>Normal Encoded (UTF-8)</h2>
